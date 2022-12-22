@@ -1,28 +1,22 @@
-/* A program to convert NFA to DFA using conversion table
+/* 
+   A program to convert NFA to DFA using conversion table
    Author - Kipawa
    Technique used - Bitmasking
-
 NOTE - 
-
 1. If your states are q0, q1, q2 they will be represented as follows (in the table)
-q0 = 2^0 = 1
-q1 = 2^1 = 2
-q2 = 2^2 = 4
+	q0 = 2^0 = 1
+	q1 = 2^1 = 2
+	q2 = 2^2 = 4
 
 2. Similarly union of states will be represented as - 
-q0,q1 = 2^0 + 2^1 = 3
-q1, q2 = 2^1 + 2^2 = 6
-q0,q1,q2 = 2^0 + 2^1 + 2^2 = 7
-
+	q0,q1 = 2^0 + 2^1 = 3
+	q1, q2 = 2^1 + 2^2 = 6
+	q0,q1,q2 = 2^0 + 2^1 + 2^2 = 7
 3. Do not give any condition for "phi"...
-That case is not handled... (Coz I m Lazy :P)
-
+	That case is not handled... (Coz I m Lazy :P)
 4. Follow zero based indexing everywhere
-
 5. Program assumes that if "Number of states are = n", then they are numbered as q0, q1, q2 ... q(n-1)
-
 6. If you find any bug, msg me and forgive me for the errors
-
 */
 
 #include<stdio.h>
