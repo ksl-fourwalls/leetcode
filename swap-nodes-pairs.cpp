@@ -34,42 +34,46 @@ struct ListNode {
 	void print()
 	{
 		for (ListNode* tmp = this; tmp != nullptr; tmp = tmp->next)
-			printf(" %d -> ", tmp->val);
+			printf(" { %d, 0x%016lx } -> ", tmp->val, (long unsigned)tmp->next);
 		printf("NULL\n");
 	}
+
 };
+
+
 
 
 class Solution {
 	public:
-		ListNode* swapPairs(ListNode* head) {
-			ListNode* tmp = head, *prev, *start = head->next, *remind_prev;
+		ListNode* swapPairs(ListNode* head) 
+		{
+			ListNode* tmp = head;
+			ListNode* prev[2];
 
 			if (tmp && tmp->next)
 			{
-				// store next to next 
-				prev = tmp->next->next;
-				tmp->next->next = tmp;
-				tmp->next->next->next = prev;
-				remind_prev = prev;
+				// store tmp and next
+				prev[0] = tmp;
+				prev[1] = tmp->next;
 
-				tmp = prev;
-				printf("0x%016x, 0x%016x\n", tmp, tmp->next);
-				printf("%d %d\n", tmp->val, tmp->next->val);
+				tmp->next = prev[1]->next;
+				prev[1]->next = tmp;
+				head = prev[1];
 
-				while (tmp && tmp->next)
+				while (tmp->next && tmp->next->next)
 				{
-					// store next to next 
-					prev = tmp->next->next; // store null
-					tmp->next->next = tmp;	// set null to something
-					tmp->next->next->next = prev;
+					prev[0] = tmp->next;
+					prev[1] = tmp->next->next;
 
-					remind_prev->next = tmp->next;
-					remind_prev = prev;
-					tmp = prev;
+					// previous next with new next
+					tmp->next = tmp->next->next;
+
+					tmp = prev[0];
+					tmp->next = prev[1]->next;
+					prev[1]->next = tmp;
 				}
 			}
-			return start;
+			return head;
 		}
 };
 
@@ -84,6 +88,9 @@ int main(int argc, char* argv[])
 	mlist.push(2);
 	mlist.push(3);
 	mlist.push(4);
+	mlist.push(5);
+	mlist.push(6);
+	mlist.push(7);
 
 	outlist = s.swapPairs(&mlist);
 	outlist->print();
