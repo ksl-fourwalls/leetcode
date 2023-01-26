@@ -6,7 +6,6 @@
 // at most k stops. If there is no such route return -1
 
 #include <iostream>
-#include <climits>
 #include <vector>
 
 using namespace std;
@@ -48,6 +47,7 @@ struct LinkedList* sorted_push(struct LinkedList* head, int which, int cost)
 
 	tp->curEdge.which = which;
 	tp->curEdge.cost = cost;
+	tp->next = nullptr;
 
 	if (tmp)
 	{
@@ -68,45 +68,11 @@ struct LinkedList* sorted_push(struct LinkedList* head, int which, int cost)
 		}
 		tmp->next = tp;
 	}
-	else 
-	{
-		tp->next = nullptr;
-		return tp;
-	}
+	else { return tp; }
+
 	return head;
 }
 
-
-typedef int64_t setCollection;
-class BitSet {
-	public:
-		BitSet(int sets) 
-		{
-			size = (sets % MAX_BITS == 0) ? (sets / MAX_BITS) : (sets / MAX_BITS + 1);
-			transition_cols = (setCollection*)calloc(MAX_BITS / CHAR_BIT, size);
-		}
-		~BitSet() 
-		{
-			free(transition_cols);
-		}
-
-		bool operator[](int which) 
-		{
-			size_t idx = which / MAX_BITS;
-			return (transition_cols[idx] >> (which % MAX_BITS)) & 1;
-		}
-
-		void set(int which)
-		{
-			size_t idx = which / MAX_BITS;
-			transition_cols[idx] |= (setCollection)1 << (which % MAX_BITS);
-		}
-
-	private:
-		setCollection *transition_cols;
-		const int MAX_BITS = sizeof(setCollection) * CHAR_BIT;
-		size_t size;
-};
 
 class Solution {
 	public:
@@ -118,7 +84,6 @@ class Solution {
 			vector<LinkedList*> graph;
 			vector<EdgeInfo> m_Stack;		// stack contains index of the 
 			LinkedListMem LinkedListManager(flights.size());		// this 
-			BitSet visited(n);
 			int total_visited = 0, cheapestCost = -1;
 
 			ListManager = &LinkedListManager;
@@ -129,25 +94,22 @@ class Solution {
 				graph[flight[0]] = sorted_push(graph[flight[0]], flight[1], flight[2]);
 
 			m_Stack.push_back({src, 0});
-			visited.set(src);
-
 			while (!m_Stack.empty())
 			{
 				int peekedNode = m_Stack.back().which;
-				if (graph[peekedNode] && !visited[graph[peekedNode]->curEdge.which] && total_visited <= k)
+				if (graph[peekedNode] && total_visited <= k)
 				{
 					if (graph[peekedNode]->curEdge.which != dst)
-					{
 						m_Stack.push_back(graph[peekedNode]->curEdge);
-						visited.set(m_Stack.back().which);
-					}
 					else
 					{
-						++cheapestCost;
+						int temp = 0;
 						for (auto curEdge: m_Stack)
-							cheapestCost += curEdge.cost;
-						cheapestCost += graph[peekedNode]->curEdge.cost;
-						break;
+							temp += curEdge.cost;
+						temp += graph[peekedNode]->curEdge.cost;
+						printf("%d\n", temp);
+						if ((unsigned)temp < (unsigned)cheapestCost)
+							cheapestCost = temp;
 					}
 					graph[peekedNode] = graph[peekedNode]->next;
 					total_visited++;
@@ -169,22 +131,12 @@ int main(int argc, char* argv[])
 	Solution s;
 	vector<vector<int>> flights = {
 	// from, to, price
-		{ 0, 1, 100 },
-		{ 1, 2, 100 },
-		{ 2, 0, 100 },
-		{ 1, 3, 600 },
-		{ 2, 3, 200 },
+		{3,4,4},{2,5,6},{4,7,10},{9,6,5},{7,4,4},{6,2,10},{6,8,6},{7,9,4},{1,5,4},{1,0,4},{9,7,3},{7,0,5},{6,5,8},{1,7,6},{4,0,9},{5,9,1},{8,7,3},{1,2,6},{4,1,5},{5,2,4},{1,9,1},{7,8,10},{0,4,2},{7,2,8}
+
 	};
-	/*
-	vector<vector<int>> flights = {
-		{ 0, 1, 100 },
-		{ 1, 2, 100 },
-		{ 0, 2, 500 },
-	};
-	*/
 
 	// @params:
 	// n, flights, src, dst, k
-	cout << s.findCheapestPrice(3, flights, 0, 2, 0) << endl;
+	cout << s.findCheapestPrice(10, flights, 6, 0, 7) << endl;
 	return 0;
 }
