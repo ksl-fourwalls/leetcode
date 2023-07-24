@@ -8,14 +8,15 @@ class Solution {
 public:
 	vector<vector<int>> flipAndInvertImage(vector<vector<int>>& image) {
 		vector<vector<int>> flipped_image;
+		vector<int> tmp_vec;
 		int idx;
 
 		for (auto& m_Vec : image)
 		{
-			vector<int> tmp_vec;
 			for (idx = m_Vec.size()-1; idx >= 0; idx--)
 				tmp_vec.push_back(!m_Vec[idx]);
 			flipped_image.push_back(tmp_vec);
+			tmp_vec.resize(0);
 		}
 
 		return flipped_image;
