@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <cmath>
+
 using namespace std;
 
 // https://leetcode.com/problems/peak-index-in-a-mountain-array/description/
