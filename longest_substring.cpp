@@ -1,11 +1,24 @@
 #include <iostream>
 #include <cstring>
+#include <iostream>
 
 using namespace std;
 #define arraysize(array) (sizeof(array) / sizeof(*array))
 
+
+#define GETBIT(x, y) ((x >> y) & (int64_t)1)
+#define SETBIT(x, y) (x |= ((int64_t)1 << y))
+
+struct checkbox{
+	int64_t first, second;
+};
+
+#define SETBIT128(x, y) (y >= 64 ? SETBIT(x.first, y-64): SETBIT(x.second, y))
+#define GETBIT128(x, y) (y >= 64 ? GETBIT(x.first, y-64): GETBIT(x.second, y))
+
 class Solution {
     public:
+    int lengthOfLongestSubstring(string s) {
     // ----------
     // v  vv    v
     // thisstring
@@ -13,25 +26,20 @@ class Solution {
     //    secondcopy found
     //    update curstart with checkbox[strptr[idx]] + 1
     //
-    int lengthOfLongestSubstring(string s) {
-        int checkbox[0xff];
-        char* strptr = (char*)s.c_str();
-        int maxlength = 0, curstart = 0, idx;
+	int idx, idy, result = 0;
 
-        memset(checkbox, 0, sizeof(checkbox));
-
-        if (strptr[0] == '\0') return 0;
-        for (idx = 1; strptr[idx] != '\0'; idx++)
-        {
-            if (checkbox[strptr[idx]] >= curstart)
-            {
-                maxlength = max(idx - curstart, maxlength);
-                curstart = checkbox[strptr[idx]] + 1;
-            }
-            checkbox[strptr[idx]] = idx;
-        }
-        maxlength = max(idx - curstart, maxlength);
-        return maxlength;
+	for (idx = 0; idx < s.size(); idx++) {
+		checkbox checkboxinfo = { 0 };
+		SETBIT128(checkboxinfo, (int)s[idx]);
+		for (idy = idx+1; idy < s.size(); idy++) {
+			if (GETBIT128(checkboxinfo, (int)s[idy])) {
+				break;
+			}
+			SETBIT128(checkboxinfo, (int)s[idy]);
+		}
+		result = max(result, idy-idx);
+	}
+        return result;
     }
 };
 
@@ -43,14 +51,6 @@ struct SolutionInfo {
 int main(void)
 {
     Solution s;
-    struct SolutionInfo sinfo[] = {
-        { "dvdf", 3 },
-        { "abcabcbb", 3 },
-        { "pwwkew", 3 },
-        { "", 0 },
-        { " ", 1 },
-    };
-
-    cout << s.lengthOfLongestSubstring("pwwkew") << endl;
+     cout << s.lengthOfLongestSubstring("abcabcbd") << endl;
     return 0;
 }
